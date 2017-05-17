@@ -6,7 +6,8 @@ def get_character_movies_from_api(character)
   #make the web request
   all_characters = RestClient.get('http://www.swapi.co/api/people/')
   character_hash = JSON.parse(all_characters)
-  
+
+
   # iterate over the character hash to find the collection of `films` for the given
   #   `character`
   # collect those film API urls, make a web request to each URL to get the info
@@ -16,16 +17,40 @@ def get_character_movies_from_api(character)
   # this collection will be the argument given to `parse_character_movies`
   #  and that method will do some nice presentation stuff: puts out a list
   #  of movies by title. play around with puts out other info about a given film.
+
+    films = []
+    character_hash.each do |key, value|
+      if key == "results"
+        value.each do |info|
+          if info["name"].downcase == character
+         films = info["films"]
+       end
+     end
+    end
+   end
+
+  film_info = []
+  films.each do |film_url|
+    film_info.push(JSON.parse(RestClient.get(film_url)))
+   end
+  film_info
 end
+
+
 
 def parse_character_movies(films_hash)
   # some iteration magic and puts out the movies in a nice list
+  films_hash.each do |film_info|
+    puts film_info["title"]
+  end
 end
+
 
 def show_character_movies(character)
   films_hash = get_character_movies_from_api(character)
   parse_character_movies(films_hash)
 end
+
 
 ## BONUS
 
